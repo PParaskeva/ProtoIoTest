@@ -1,5 +1,6 @@
 package com.mpmp.protoiotest.Fragments
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,6 +11,7 @@ import coil.Coil
 import coil.api.get
 import coil.api.load
 import com.mpmp.protoiotest.Data.Data
+import com.mpmp.protoiotest.MainActivity
 
 import com.mpmp.protoiotest.R
 import com.squareup.picasso.Picasso
@@ -40,6 +42,7 @@ class ResultsFragment : Fragment() {
         setScoreValue()
         setUpCorrectAnswerValue()
         setUpWrongAnswerValue()
+        setUpRestartButton()
     }
 
     private fun calculateResults() {
@@ -77,6 +80,15 @@ class ResultsFragment : Fragment() {
 
     private fun setUpWrongAnswerValue() {
         wrongAnswerValue?.text = Data.userData?.wrongAnswersList?.size?.toString() ?: "0"
+    }
+
+    private fun setUpRestartButton() {
+        restartButton?.setOnClickListener {
+            Intent(activity, MainActivity::class.java)?.let {
+                activity?.startActivity(it)
+                activity?.finish()
+            }
+        }
     }
 
     companion object {

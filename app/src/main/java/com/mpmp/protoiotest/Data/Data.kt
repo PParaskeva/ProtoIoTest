@@ -4,7 +4,7 @@ import com.mpmp.protoiotest.Data.Responses.GetQuestionsResponse
 import com.mpmp.protoiotest.Data.Responses.GetResultResponse
 
 object Data {
-    val userData: UserData? = UserData()
+    var userData: UserData? = null
     var getQuestionsResponse: GetQuestionsResponse? = null
     var getResultsResponse: GetResultResponse? = null
 }

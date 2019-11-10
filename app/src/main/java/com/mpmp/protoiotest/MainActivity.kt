@@ -6,6 +6,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.mpmp.protoiotest.Contracts.MainContract
 import com.mpmp.protoiotest.Data.Data
+import com.mpmp.protoiotest.Data.UserData
 import com.mpmp.protoiotest.Fragments.QuestionFragment
 import com.mpmp.protoiotest.Fragments.ResultsFragment
 import com.mpmp.protoiotest.Presenter.MainPresenter
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
         mPresenter = MainPresenter(this)
         mPresenter?.start()
+        Data.userData = UserData()
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 coroutineScope {

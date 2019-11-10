@@ -39,6 +39,7 @@
                 tools:text="Question : Something " />
 
             <TextView
+                android:textColor="@color/red"
                 android:id="@+id/multipleAnswerMsg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -90,43 +90,36 @@ class QuestionAdapter(
                 val possibleAnswer = mQuestion?.possibleAnswers?.get(positions)
                 val correctAnswers = mQuestion?.correctAnswerList
                 text = possibleAnswer?.caption ?: ""
+
                 background = if (mSelectedAnswerPositions.contains(positions)) {
-                    ContextCompat.getDrawable(
-                        itemView.context,
-                        R.drawable.rounded_button_waiting
-                    )
+                    roundedButtonWaitingDrawable
                 } else {
-                    ContextCompat.getDrawable(
-                        itemView.context,
-                        R.drawable.roundedbutton
-                    )
+                    roundedButtonDrawable
                 }
 
                 isTheAnswerCorrect?.let {
                     isEnabled = false
 
-                    if (mSelectedAnswerPositions.contains(positions)) {
-                        if (correctAnswers?.contains(possibleAnswer?.aId) == false) {
-                            isTheAnswerCorrect = false
-                            background = ContextCompat.getDrawable(
-                                itemView.context,
-                                R.drawable.rounded_button_wrong
-                            )
-                        }
+                    val isThePositionSelectedAsAnswer = mSelectedAnswerPositions.contains(positions)
+                    val isThePositionACorrectAnswer = correctAnswers?.contains(possibleAnswer?.aId)
+
+                    if (isThePositionSelectedAsAnswer &&
+                        isThePositionACorrectAnswer == false) {
+                        isTheAnswerCorrect = false
+                        background = roundedButtonWrongDrawable
                     }
 
-                    if (correctAnswers?.contains(possibleAnswer?.aId) == true) {
-                        background = if (mSelectedAnswerPositions.contains(positions)) {
-                            ContextCompat.getDrawable(
-                                itemView.context,
-                                R.drawable.rounded_button_correct
-                            )
-                        } else {
+                    if (isThePositionACorrectAnswer == true) {
+                        background = if (mSelectedAnswerPositions.isEmpty()) {
                             isTheAnswerCorrect = false
-                            ContextCompat.getDrawable(
-                                itemView.context,
-                                R.drawable.rounded_button_wrong
-                            )
+                            roundedButtonWrongDrawable
+                        } else {
+                            if (isThePositionSelectedAsAnswer) {
+                                roundedButtonCorrectDrawable
+                            } else {
+                                isTheAnswerCorrect = false
+                                roundedButtonWrongDrawable
+                            }
                         }
                     }
                 }
@@ -172,5 +165,14 @@ class QuestionAdapter(
         val questionTextView: TextView? = itemView.questionTextView
         val multipleAnswerMsg: TextView? = itemView.multipleAnswerMsg
         val answerButton: Button? = itemView.answerButton
+
+        val context = itemView.context
+        val roundedButtonDrawable = ContextCompat.getDrawable(context, R.drawable.roundedbutton)
+        val roundedButtonWrongDrawable =
+            ContextCompat.getDrawable(context, R.drawable.rounded_button_wrong)
+        val roundedButtonWaitingDrawable =
+            ContextCompat.getDrawable(context, R.drawable.rounded_button_waiting)
+        val roundedButtonCorrectDrawable =
+            ContextCompat.getDrawable(context, R.drawable.rounded_button_correct)
     }
 }
