@@ -14,19 +14,19 @@
         android:layout_height="match_parent" />
 
     <FrameLayout
-        android:layout_gravity="bottom"
+        android:id="@+id/continueButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#0059b3">
+        android:layout_gravity="bottom"
+        android:background="@color/blue">
 
         <TextView
-            android:id="@+id/continueButton"
-            android:textColor="#ffffff"
-            android:layout_margin="16dp"
-            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center"
             android:text="Continue"
+            android:textColor="#ffffff"
             android:textSize="18sp"
             android:textStyle="bold" />
 

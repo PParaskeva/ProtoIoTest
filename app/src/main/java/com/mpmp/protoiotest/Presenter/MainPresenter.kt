@@ -9,12 +9,18 @@ import com.mpmp.protoiotest.Model.Model
 
 class MainPresenter(val mView: MainContract.View?) : MainContract.Presenter {
 
+
     override fun start() {
         mView?.setPresenter(this)
     }
 
+    override suspend fun getResults() {
+        Model().getResults().let {
+            Data.getResultsResponse = it
+        }
+    }
+
     override suspend fun getQuestions() {
-        mView?.showProgressBar()
         Model().getQuestions().let { getQuestionsResponse ->
             getQuestionsResponse?.questions?.forEach { question ->
                 question?.correctAnswerList = buildCorrectListAnswer(question)
@@ -26,8 +32,6 @@ class MainPresenter(val mView: MainContract.View?) : MainContract.Presenter {
             }
 
             Data.getQuestionsResponse = getQuestionsResponse
-            mView?.hideProgressBar()
-            mView?.moveToQuestionFragment()
         }
     }
 

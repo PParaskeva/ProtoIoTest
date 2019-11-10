@@ -16,9 +16,11 @@ import com.mpmp.protoiotest.R
 import kotlinx.android.synthetic.main.questions_item_view.view.*
 
 class QuestionAdapter(
-    val mQuestion: Question?) : RecyclerView.Adapter<ViewHolder>() {
+    val mQuestion: Question?
+) : RecyclerView.Adapter<ViewHolder>() {
 
     var mSelectedAnswerPosition: Int? = null
+    var isTheAnswerCorrect = true
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(
@@ -76,6 +78,7 @@ class QuestionAdapter(
 
                     if (selectedAnswerPosition == positions) {
                         if (correctAnswers?.contains(possibleAnswer?.aId) == false) {
+                            isTheAnswerCorrect = false
                             background = ContextCompat.getDrawable(
                                 itemView.context,
                                 R.drawable.rounded_button_wrong

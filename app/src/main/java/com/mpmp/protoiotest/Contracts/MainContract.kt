@@ -7,6 +7,7 @@ interface MainContract {
 
     interface Presenter : BasePresenter {
         suspend fun getQuestions()
+        suspend fun getResults()
     }
 
     interface View : BaseView<Presenter> {

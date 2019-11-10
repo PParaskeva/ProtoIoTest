@@ -13,6 +13,7 @@ import com.mpmp.protoiotest.Presenter.QuestionsPresenter
 import com.mpmp.protoiotest.R
 import kotlinx.android.synthetic.main.fragment_question.*
 import com.google.android.material.snackbar.Snackbar
+import com.mpmp.protoiotest.Data.Data
 import com.mpmp.protoiotest.MainActivity
 import kotlinx.coroutines.*
 
@@ -75,7 +76,19 @@ class QuestionFragment : Fragment(), QuestionContract.View {
                     mAdapter?.notifyDataSetChanged()
                 }
                 delay(3000)
-                (activity as MainActivity).moveToQuestionFragment()
+                if (mAdapter?.isTheAnswerCorrect == true) {
+                    mQuestionId?.let {
+                        Data.userData?.correctAnswersList?.add(it)
+                        Data.userData?.totalPoints =
+                            (Data.userData?.totalPoints ?: 0) + (mQuestion?.points ?: 0)
+                    }
+
+                } else {
+                    mQuestionId?.let {
+                        Data.userData?.wrongAnswersList?.add(it)
+                    }
+                }
+                activity?.let { (it as MainActivity).moveToQuestionFragment() }
             }
         } catch (t: Throwable) {
 

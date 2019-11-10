@@ -7,12 +7,10 @@ import androidx.fragment.app.Fragment
 import com.mpmp.protoiotest.Contracts.MainContract
 import com.mpmp.protoiotest.Data.Data
 import com.mpmp.protoiotest.Fragments.QuestionFragment
+import com.mpmp.protoiotest.Fragments.ResultsFragment
 import com.mpmp.protoiotest.Presenter.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity(), MainContract.View {
@@ -30,7 +28,16 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         mPresenter?.start()
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                mPresenter?.getQuestions()
+                coroutineScope {
+                    showProgressBar()
+                    async { mPresenter?.getQuestions() }.await()
+                    async { mPresenter?.getResults() }.await()
+                    hideProgressBar()
+                    Data.getQuestionsResponse?.let {
+                        moveToQuestionFragment()
+                    }
+                }
+
             } catch (t: Throwable) {
                 hideProgressBar()
             }
@@ -55,9 +62,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
                 }
             }
         } else {
-
+            fragmentTransfer(ResultsFragment.newInstance())
         }
-
     }
 
     override suspend fun showProgressBar() {
