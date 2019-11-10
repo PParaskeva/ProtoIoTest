@@ -90,13 +90,13 @@ class QuestionAdapter(
                 val possibleAnswer = mQuestion?.possibleAnswers?.get(positions)
                 val correctAnswers = mQuestion?.correctAnswerList
                 text = possibleAnswer?.caption ?: ""
-                if (mSelectedAnswerPositions.contains(positions)) {
-                    background = ContextCompat.getDrawable(
+                background = if (mSelectedAnswerPositions.contains(positions)) {
+                    ContextCompat.getDrawable(
                         itemView.context,
                         R.drawable.rounded_button_waiting
                     )
                 } else {
-                    background = ContextCompat.getDrawable(
+                    ContextCompat.getDrawable(
                         itemView.context,
                         R.drawable.roundedbutton
                     )
@@ -116,10 +116,18 @@ class QuestionAdapter(
                     }
 
                     if (correctAnswers?.contains(possibleAnswer?.aId) == true) {
-                        background = ContextCompat.getDrawable(
-                            itemView.context,
-                            R.drawable.rounded_button_correct
-                        )
+                        background = if (mSelectedAnswerPositions.contains(positions)) {
+                            ContextCompat.getDrawable(
+                                itemView.context,
+                                R.drawable.rounded_button_correct
+                            )
+                        } else {
+                            isTheAnswerCorrect = false
+                            ContextCompat.getDrawable(
+                                itemView.context,
+                                R.drawable.rounded_button_wrong
+                            )
+                        }
                     }
                 }
 
@@ -132,8 +140,6 @@ class QuestionAdapter(
                     notifyDataSetChanged()
                 }
             }
-
-
         }
     }
 
