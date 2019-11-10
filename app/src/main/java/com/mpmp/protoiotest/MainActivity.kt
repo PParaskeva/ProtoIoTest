@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.mpmp.protoiotest.Contracts.MainContract
+import com.mpmp.protoiotest.Data.Data
 import com.mpmp.protoiotest.Fragments.QuestionFragment
 import com.mpmp.protoiotest.Presenter.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -12,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity(), MainContract.View {
 
@@ -31,7 +33,6 @@ class MainActivity : AppCompatActivity(), MainContract.View {
                 mPresenter?.getQuestions()
             } catch (t: Throwable) {
                 hideProgressBar()
-                println(t)
             }
         }
     }
@@ -41,7 +42,22 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override suspend fun moveToQuestionFragment() {
-        fragmentTransfer(QuestionFragment.newInstance(4))
+        val listOfQuestionsId = Data.userData?.listOfQuestionsId ?: mutableListOf()
+        val questions = Data.getQuestionsResponse?.questions?.filter {
+            !listOfQuestionsId.contains(it?.qId)
+        }
+        if (questions?.size ?: 0 > 0) {
+            val randomNum = Random.nextInt(0, questions?.size ?: 0)
+            questions?.get(randomNum)?.let { randomQuestionSelection ->
+                randomQuestionSelection.qId?.let { questionId ->
+                    Data.userData?.listOfQuestionsId?.add(questionId)
+                    fragmentTransfer(QuestionFragment.newInstance(questionId))
+                }
+            }
+        } else {
+
+        }
+
     }
 
     override suspend fun showProgressBar() {

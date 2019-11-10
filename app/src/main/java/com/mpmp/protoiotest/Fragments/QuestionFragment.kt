@@ -13,6 +13,7 @@ import com.mpmp.protoiotest.Presenter.QuestionsPresenter
 import com.mpmp.protoiotest.R
 import kotlinx.android.synthetic.main.fragment_question.*
 import com.google.android.material.snackbar.Snackbar
+import com.mpmp.protoiotest.MainActivity
 import kotlinx.coroutines.*
 
 
@@ -74,7 +75,7 @@ class QuestionFragment : Fragment(), QuestionContract.View {
                     mAdapter?.notifyDataSetChanged()
                 }
                 delay(3000)
-                println("The time is done")
+                (activity as MainActivity).moveToQuestionFragment()
             }
         } catch (t: Throwable) {
 
