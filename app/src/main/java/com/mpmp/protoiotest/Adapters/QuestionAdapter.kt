@@ -9,18 +9,27 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import coil.api.load
 import com.mpmp.protoiotest.Adapters.QuestionAdapter.*
 import com.mpmp.protoiotest.Data.Responses.Question
+import com.mpmp.protoiotest.Enum.QuestionType
 import com.mpmp.protoiotest.R
 import kotlinx.android.synthetic.main.questions_item_view.view.*
+import android.graphics.BitmapFactory
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import coil.Coil
+import coil.api.get
+import kotlinx.coroutines.*
+import java.net.URL
+
 
 class QuestionAdapter(
     val mQuestion: Question?
 ) : RecyclerView.Adapter<ViewHolder>() {
 
-    var mSelectedAnswerPosition: Int? = null
-    var isTheAnswerCorrect = true
+    var mSelectedAnswerPositions: MutableList<Int?> = mutableListOf()
+    var isTheAnswerCorrect: Boolean? = null
+    var mDrawable: Drawable? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(
@@ -45,6 +54,7 @@ class QuestionAdapter(
     private fun initXml(holder: ViewHolder) {
         holder.apply {
             questionHeaderLayout?.visibility = View.GONE
+            multipleAnswerMsg?.visibility = View.GONE
             answerButton?.visibility = View.GONE
         }
     }
@@ -53,10 +63,19 @@ class QuestionAdapter(
         holder.apply {
             questionHeaderLayout?.visibility = View.VISIBLE
 
-            questionHeaderImage?.load(mQuestion?.img) {
-                crossfade(true)
-                placeholder(R.drawable.placeholder)
-                error(R.drawable.placeholder)
+            if (mQuestion?.questionType == QuestionType.MUTIPLECHOICE_MULTIPLE.type) {
+                multipleAnswerMsg?.visibility = View.VISIBLE
+            }
+            if (mDrawable == null) {
+                questionHeaderImage?.setImageResource(R.drawable.placeholder)
+                CoroutineScope(Dispatchers.IO).launch {
+                    async { mDrawable = mQuestion?.img?.let { Coil.get(it) } }.await()
+                    runBlocking(Dispatchers.Main) {
+                        questionHeaderImage?.setImageDrawable(mDrawable)
+                    }
+                }
+            } else {
+                questionHeaderImage?.setImageDrawable(mDrawable)
             }
 
             questionTextView?.text = mQuestion?.title
@@ -71,12 +90,22 @@ class QuestionAdapter(
                 val possibleAnswer = mQuestion?.possibleAnswers?.get(positions)
                 val correctAnswers = mQuestion?.correctAnswerList
                 text = possibleAnswer?.caption ?: ""
+                if (mSelectedAnswerPositions.contains(positions)) {
+                    background = ContextCompat.getDrawable(
+                        itemView.context,
+                        R.drawable.rounded_button_waiting
+                    )
+                } else {
+                    background = ContextCompat.getDrawable(
+                        itemView.context,
+                        R.drawable.roundedbutton
+                    )
+                }
 
-                mSelectedAnswerPosition?.let { selectedAnswerPosition ->
-
+                isTheAnswerCorrect?.let {
                     isEnabled = false
 
-                    if (selectedAnswerPosition == positions) {
+                    if (mSelectedAnswerPositions.contains(positions)) {
                         if (correctAnswers?.contains(possibleAnswer?.aId) == false) {
                             isTheAnswerCorrect = false
                             background = ContextCompat.getDrawable(
@@ -95,17 +124,35 @@ class QuestionAdapter(
                 }
 
                 setOnClickListener {
-                    background = ContextCompat.getDrawable(
-                        itemView.context,
-                        R.drawable.rounded_button_waiting
-                    )
-                    possibleAnswer?.aId?.let { answerId ->
-                        mSelectedAnswerPosition = positions
+                    if (mQuestion?.questionType == QuestionType.MUTIPLECHOICE_MULTIPLE.type) {
+                        onMultipleAnswerSelection(positions)
+                    } else {
+                        onSingleAnswerSelection(positions)
                     }
+                    notifyDataSetChanged()
                 }
             }
 
 
+        }
+    }
+
+    private fun onSingleAnswerSelection(positions: Int) {
+        if (mSelectedAnswerPositions.contains(positions)) {
+            mSelectedAnswerPositions.remove(positions)
+        } else {
+            mSelectedAnswerPositions.clear()
+            mSelectedAnswerPositions.add(positions)
+        }
+    }
+
+    private fun onMultipleAnswerSelection(
+        positions: Int
+    ) {
+        if (mSelectedAnswerPositions.contains(positions)) {
+            mSelectedAnswerPositions.remove(positions)
+        } else {
+            mSelectedAnswerPositions.add(positions)
         }
     }
 
@@ -117,6 +164,7 @@ class QuestionAdapter(
         val questionHeaderLayout: LinearLayout? = itemView.questionHeaderLayout
         val questionHeaderImage: ImageView? = itemView.questionHeaderImage
         val questionTextView: TextView? = itemView.questionTextView
+        val multipleAnswerMsg: TextView? = itemView.multipleAnswerMsg
         val answerButton: Button? = itemView.answerButton
     }
 }

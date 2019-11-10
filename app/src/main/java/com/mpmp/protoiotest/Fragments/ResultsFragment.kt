@@ -1,15 +1,20 @@
 package com.mpmp.protoiotest.Fragments
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import coil.Coil
+import coil.api.get
 import coil.api.load
 import com.mpmp.protoiotest.Data.Data
 
 import com.mpmp.protoiotest.R
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_results.*
+import kotlinx.coroutines.*
 
 class ResultsFragment : Fragment() {
 
@@ -48,10 +53,13 @@ class ResultsFragment : Fragment() {
     }
 
     private fun setUpResultImageView() {
-        resultsImageView?.load(mImageUrl) {
-            crossfade(true)
-            placeholder(R.drawable.placeholder)
-            error(R.drawable.placeholder)
+        resultsImageView?.setImageResource(R.drawable.placeholder)
+        CoroutineScope(Dispatchers.IO).launch {
+            var drawable: Drawable? = null
+            async { drawable = mImageUrl?.let { Coil.get(it) } }.await()
+            runBlocking(Dispatchers.Main) {
+                resultsImageView?.setImageDrawable(drawable)
+            }
         }
     }
 

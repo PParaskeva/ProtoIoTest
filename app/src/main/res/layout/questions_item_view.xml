@@ -10,24 +10,43 @@
         android:id="@+id/questionHeaderLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/questionHeaderImage"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center_horizontal"
-            android:elevation="10dp" />
-
-        <TextView
-            android:id="@+id/questionTextView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            android:adjustViewBounds="true"
+            android:elevation="10dp"
+            android:scaleType="centerCrop" />
+
+        <LinearLayout
+            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
-            tools:text="Question : Something " />
+            android:layout_marginRight="8dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/questionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="Question : Something " />
+
+            <TextView
+                android:id="@+id/multipleAnswerMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="(Multiple answers are allowed)"
+                android:textSize="22sp" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <Button

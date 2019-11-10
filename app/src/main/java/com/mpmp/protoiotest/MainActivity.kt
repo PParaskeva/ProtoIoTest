@@ -20,11 +20,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mPresenter = MainPresenter(this)
-    }
 
-    override fun onResume() {
-        super.onResume()
+        mPresenter = MainPresenter(this)
         mPresenter?.start()
         CoroutineScope(Dispatchers.IO).launch {
             try {

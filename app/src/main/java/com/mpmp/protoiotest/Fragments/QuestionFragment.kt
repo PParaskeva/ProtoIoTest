@@ -69,9 +69,7 @@ class QuestionFragment : Fragment(), QuestionContract.View {
     fun onContinueClick() {
         try {
             CoroutineScope(Dispatchers.Default).launch {
-                if (mAdapter?.mSelectedAnswerPosition == null) {
-                    mAdapter?.mSelectedAnswerPosition = -1
-                }
+                mAdapter?.isTheAnswerCorrect = true
                 runBlocking(Dispatchers.Main) {
                     mAdapter?.notifyDataSetChanged()
                 }
