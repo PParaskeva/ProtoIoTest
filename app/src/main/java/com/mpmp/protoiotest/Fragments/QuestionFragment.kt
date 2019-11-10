@@ -6,21 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.mpmp.protoiotest.Adapters.QuestionAdapter
 import com.mpmp.protoiotest.Contracts.QuestionContract
 import com.mpmp.protoiotest.Data.Responses.Question
 import com.mpmp.protoiotest.Presenter.QuestionsPresenter
-
 import com.mpmp.protoiotest.R
 import kotlinx.android.synthetic.main.fragment_question.*
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
+
 
 class QuestionFragment : Fragment(), QuestionContract.View {
 
     var mPresenter: QuestionContract.Presenter? = null
 
     var mAdapter: QuestionAdapter? = null
+    var snackbar: Snackbar? = null
 
     var mQuestionId: Int? = null
     var mQuestion: Question? = null
@@ -45,24 +46,35 @@ class QuestionFragment : Fragment(), QuestionContract.View {
         mPresenter?.start()
         mQuestion = mQuestionId?.let { mPresenter?.getQuestionFromTheData(it) }
         setUpRecyclerView()
+        setUpContinueButton()
     }
 
     private fun setUpRecyclerView() {
         questionFragmentRecyclerView?.apply {
             layoutManager = LinearLayoutManager(activity)
             itemAnimator = null
-            mAdapter = QuestionAdapter(mQuestion, checkIfTheAnswerIsCorrect)
+            mAdapter = QuestionAdapter(mQuestion)
             adapter = mAdapter
         }
     }
 
-    val checkIfTheAnswerIsCorrect: (() -> Unit)? = {
+    private fun setUpContinueButton() {
+        continueButton?.setOnClickListener {
+            onContinueClick()
+        }
+    }
+
+    fun onContinueClick() {
         try {
             CoroutineScope(Dispatchers.Default).launch {
-                delay(1000)
+                if (mAdapter?.mSelectedAnswerPosition == null) {
+                    mAdapter?.mSelectedAnswerPosition = -1
+                }
                 runBlocking(Dispatchers.Main) {
                     mAdapter?.notifyDataSetChanged()
                 }
+                delay(3000)
+                println("The time is done")
             }
         } catch (t: Throwable) {
 

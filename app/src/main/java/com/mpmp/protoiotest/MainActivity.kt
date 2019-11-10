@@ -30,7 +30,8 @@ class MainActivity : AppCompatActivity(), MainContract.View {
             try {
                 mPresenter?.getQuestions()
             } catch (t: Throwable) {
-                println(t.message)
+                hideProgressBar()
+                println(t)
             }
         }
     }
@@ -40,10 +41,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override suspend fun moveToQuestionFragment() {
-        println("moveToQuestionFragment")
-//        runBlocking(Dispatchers.Main) {
-            fragmentTransfer(QuestionFragment.newInstance(1))
-//        }
+        fragmentTransfer(QuestionFragment.newInstance(4))
     }
 
     override suspend fun showProgressBar() {

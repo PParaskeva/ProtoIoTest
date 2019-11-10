@@ -1,7 +1,5 @@
 package com.mpmp.protoiotest.Adapters
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -18,9 +16,7 @@ import com.mpmp.protoiotest.R
 import kotlinx.android.synthetic.main.questions_item_view.view.*
 
 class QuestionAdapter(
-    val mQuestion: Question?,
-    val checkIfTheAnswerIsCorrect: (() -> Unit)?
-) : RecyclerView.Adapter<ViewHolder>() {
+    val mQuestion: Question?) : RecyclerView.Adapter<ViewHolder>() {
 
     var mSelectedAnswerPosition: Int? = null
 
@@ -71,11 +67,15 @@ class QuestionAdapter(
             answerButton?.apply {
                 visibility = View.VISIBLE
                 val possibleAnswer = mQuestion?.possibleAnswers?.get(positions)
+                val correctAnswers = mQuestion?.correctAnswerList
                 text = possibleAnswer?.caption ?: ""
 
                 mSelectedAnswerPosition?.let { selectedAnswerPosition ->
+
+                    isEnabled = false
+
                     if (selectedAnswerPosition == positions) {
-                        if (possibleAnswer?.aId != 1) {
+                        if (correctAnswers?.contains(possibleAnswer?.aId) == false) {
                             background = ContextCompat.getDrawable(
                                 itemView.context,
                                 R.drawable.rounded_button_wrong
@@ -83,7 +83,7 @@ class QuestionAdapter(
                         }
                     }
 
-                    if (possibleAnswer?.aId == 1) {
+                    if (correctAnswers?.contains(possibleAnswer?.aId) == true) {
                         background = ContextCompat.getDrawable(
                             itemView.context,
                             R.drawable.rounded_button_correct
@@ -98,7 +98,6 @@ class QuestionAdapter(
                     )
                     possibleAnswer?.aId?.let { answerId ->
                         mSelectedAnswerPosition = positions
-                        checkIfTheAnswerIsCorrect?.invoke()
                     }
                 }
             }
